@@ -5,6 +5,7 @@ import { RootState } from "../store";
 import {
   CartProduct,
   addToCart,
+  clearCart,
   removeFromCart,
 } from "../store/cart/cartReducer";
 
@@ -19,6 +20,10 @@ function CartSummary() {
 
   const handleDecrement = (cartItem: CartProduct) => {
     dispatch(removeFromCart(cartItem.id));
+  };
+
+  const handleClearCart = () => {
+    dispatch(clearCart());
   };
 
   return (
@@ -68,7 +73,7 @@ function CartSummary() {
           Total Price:{" "}
           <span className="text-base-color font-semibold">{totalAmount}₺</span>
         </p>
-        <Button>Checkout</Button>
+        <Button onClick={handleClearCart}>Checkout</Button>
       </PanelCardLayout>
     </aside>
   );
