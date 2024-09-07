@@ -11,18 +11,19 @@ function ProductCard({ product }: { product: Product }) {
     dispatch(addToCart(product));
   };
   return (
-    <Link
-      to={`/${product.id}`}
-      className="bg-white p-2.5 text-center flex flex-col"
-    >
-      <img className="h-[150px] w-full bg-[#c4c4c4]" src={product.image} />
-      <p className="text-base-color font-medium text-sm my-[15px] text-left">
-        {Number(product.price)} ₺
-      </p>
-      <p className="font-medium text-sm mb-[15px] text-left">{product.name}</p>
-      <div className="flex-grow" />
+    <div className="bg-white p-2.5">
+      <Link to={`/${product.id}`} className="text-center flex flex-col">
+        <img className="h-[150px] w-full bg-[#c4c4c4]" src={product.image} />
+        <p className="text-base-color font-medium text-sm my-[15px] text-left">
+          {Number(product.price)} ₺
+        </p>
+        <p className="font-medium text-sm mb-[15px] text-left">
+          {product.name}
+        </p>
+        <div className="flex-grow" />
+      </Link>
       <Button onClick={() => addProductToCart(product)}>Add to Cart</Button>
-    </Link>
+    </div>
   );
 }
 

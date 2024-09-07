@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Product } from "../../services/product";
+import { getLocalStorage, setLocalStorage } from "../../utils";
 
 export interface CartProduct extends Product {
   quantity: number;
@@ -15,9 +16,14 @@ const initialState: CartState = {
   totalAmount: 0,
 };
 
+const loadCartFromLocalStorage = (): CartState => {
+  const savedCart = getLocalStorage<CartState>("cart");
+  return savedCart || initialState;
+};
+
 const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: loadCartFromLocalStorage(),
   reducers: {
     addToCart: (state, action: PayloadAction<Product>) => {
       const existingProduct = state.items.find(
@@ -31,6 +37,7 @@ const cartSlice = createSlice({
       }
 
       state.totalAmount += Number(action.payload.price);
+      setLocalStorage("cart", state);
     },
     removeFromCart: (state, action: PayloadAction<string>) => {
       const existingProduct = state.items.find(
@@ -48,10 +55,12 @@ const cartSlice = createSlice({
           );
         }
       }
+      setLocalStorage("cart", state);
     },
     clearCart: (state) => {
       state.items = [];
       state.totalAmount = 0;
+      setLocalStorage("cart", state);
     },
   },
 });
