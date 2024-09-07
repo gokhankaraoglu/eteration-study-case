@@ -1,36 +1,40 @@
-import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
 import PanelCardLayout from "./PanelCardLayout";
 import { SortOptions } from "../services/product";
+import { useState } from "react";
+import {
+  setSelectedBrand,
+  setSelectedModel,
+  setSort,
+} from "../store/filters/filtersReducer";
 
 export interface SidebarProps {
   brands: string[];
   models: string[];
-  onFilterChange: (filters: {
-    sort: SortOptions;
-    selectedBrand: string;
-    selectedModel: string;
-  }) => void;
 }
 
-function Sidebar({ brands, models, onFilterChange }: SidebarProps) {
-  const [sort, setSort] = useState<SortOptions>(SortOptions.DateAsc);
-  const [selectedBrand, setSelectedBrand] = useState<string>("");
-  const [selectedModel, setSelectedModel] = useState<string>("");
+function Sidebar({ brands, models }: SidebarProps) {
+  const dispatch = useDispatch();
+  const { sort, selectedBrand, selectedModel } = useSelector(
+    (state: RootState) => state.filters
+  );
+
   const [brandFilter, setBrandFilter] = useState<string>("");
   const [modelFilter, setModelFilter] = useState<string>("");
 
   const handleSortChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSort(e.target.value as SortOptions);
+    dispatch(setSort(e.target.value as SortOptions));
   };
 
   const handleBrandChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const brand = e.target.value;
-    setSelectedBrand((prev) => (prev === brand ? "" : brand));
+    dispatch(setSelectedBrand(selectedBrand === brand ? "" : brand));
   };
 
   const handleModelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const model = e.target.value;
-    setSelectedModel((prev) => (prev === model ? "" : model));
+    dispatch(setSelectedModel(selectedModel === model ? "" : model));
   };
 
   const filteredBrands = brands.filter((brand) =>
@@ -39,10 +43,6 @@ function Sidebar({ brands, models, onFilterChange }: SidebarProps) {
   const filteredModels = models.filter((model) =>
     model.toLowerCase().includes(modelFilter.toLowerCase())
   );
-
-  useEffect(() => {
-    onFilterChange({ sort, selectedBrand, selectedModel });
-  }, [sort, selectedBrand, selectedModel]);
 
   return (
     <aside className="w-1/5 flex flex-col gap-5">
@@ -101,6 +101,7 @@ function Sidebar({ brands, models, onFilterChange }: SidebarProps) {
         <input
           type="text"
           placeholder="Search Brands"
+          className="p-2 bg-gray-100"
           value={brandFilter}
           onChange={(e) => setBrandFilter(e.target.value)}
         />
@@ -120,16 +121,17 @@ function Sidebar({ brands, models, onFilterChange }: SidebarProps) {
         </div>
       </PanelCardLayout>
 
-      <PanelCardLayout name="Models">
+      <PanelCardLayout name="Models" className="mb-5">
         <input
           type="text"
           placeholder="Search Models"
+          className="p-2 bg-gray-100"
           value={modelFilter}
           onChange={(e) => setModelFilter(e.target.value)}
         />
         <div className="h-48 overflow-y-auto flex flex-col gap-2">
           {filteredModels.map((model) => (
-            <label key={model} className="block">
+            <label key={model}>
               <input
                 type="checkbox"
                 name="model"

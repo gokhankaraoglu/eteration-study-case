@@ -2,31 +2,28 @@ import ProductList from "./ProductList";
 import CartSummary from "./CartSummary";
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+
 import {
   Product,
-  SortOptions,
   getProductModelandBrand,
   getProducts,
 } from "../services/product";
 import Pagination from "./Pagination";
 
 function ProductPage() {
+  const { sort, selectedBrand, selectedModel, searchQuery } = useSelector(
+    (state: RootState) => state.filters
+  );
+
   const [productList, setProductList] = useState<Product[]>([]);
   const [page, setPage] = useState<number>(1);
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
-  const [filters, setFilters] = useState<{
-    sort: SortOptions;
-    selectedBrand: string;
-    selectedModel: string;
-  }>({
-    sort: SortOptions.DateAsc,
-    selectedBrand: "",
-    selectedModel: "",
-  });
 
   const limit = 12;
-  const totalItemCount = 74;
+  const totalItemCount = 74; // Hardcoded value or can be dynamically set
   const totalPages = Math.ceil(totalItemCount / limit);
 
   useEffect(() => {
@@ -44,15 +41,16 @@ function ProductPage() {
       const products = await getProducts(
         page,
         limit,
-        filters.sort,
-        filters.selectedBrand,
-        filters.selectedModel
+        sort,
+        selectedBrand,
+        selectedModel,
+        searchQuery
       );
       setProductList(products);
     };
 
     fetchProducts();
-  }, [page, filters]);
+  }, [page, sort, selectedBrand, selectedModel, searchQuery]);
 
   const handlePageChange = (page: number) => {
     let newPage = page;
@@ -61,23 +59,11 @@ function ProductPage() {
     setPage(newPage);
   };
 
-  const handleFilterChange = (newFilters: {
-    sort: SortOptions;
-    selectedBrand: string;
-    selectedModel: string;
-  }) => {
-    setFilters(newFilters);
-  };
-
   return (
     <div className="container">
       <div className="main-content">
-        <Sidebar
-          brands={brands}
-          models={models}
-          onFilterChange={handleFilterChange}
-        />
-        <div className="product-area">
+        <Sidebar brands={brands} models={models} />
+        <div className="w-3/5 flex flex-col">
           <ProductList products={productList} />
           {productList.length >= limit && (
             <Pagination

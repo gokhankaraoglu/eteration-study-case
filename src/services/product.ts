@@ -23,7 +23,8 @@ export async function getProducts(
   limit: number = 12,
   sort: SortOptions = SortOptions.PriceDesc,
   selectedBrand: string,
-  selectedModel: string
+  selectedModel: string,
+  searchQuery: string
 ): Promise<Product[]> {
   let sortField = "";
   let order = "";
@@ -58,6 +59,9 @@ export async function getProducts(
 
   if (selectedModel) {
     path += `&model=${selectedModel}`;
+  }
+  if (searchQuery) {
+    path += `&name=${searchQuery}`;
   }
 
   try {

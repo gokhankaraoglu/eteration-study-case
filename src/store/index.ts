@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import cartReducer from "./cart/cartReducer";
 import { useDispatch } from "react-redux";
+import filtersReducer from "./filters/filtersReducer";
 
 export const store = configureStore({
   reducer: {
     cart: cartReducer,
+    filters: filtersReducer,
   },
 });
 
