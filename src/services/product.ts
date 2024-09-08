@@ -18,6 +18,16 @@ export enum SortOptions {
   DateAsc = "dateAsc",
 }
 
+export enum SortingField {
+  PRICE = "price",
+  CREATED_AT = "createdAt",
+}
+
+export enum OrderType {
+  DESC = "desc",
+  ASC = "asc",
+}
+
 export async function getProducts(
   page: number = 1,
   limit: number = 12,
@@ -31,24 +41,24 @@ export async function getProducts(
 
   switch (sort) {
     case SortOptions.PriceDesc:
-      sortField = "price";
-      order = "desc";
+      sortField = SortingField.PRICE;
+      order = OrderType.DESC;
       break;
     case SortOptions.PriceAsc:
-      sortField = "price";
-      order = "asc";
+      sortField = SortingField.PRICE;
+      order = OrderType.ASC;
       break;
     case SortOptions.DateDesc:
-      sortField = "createdAt";
-      order = "desc";
+      sortField = SortingField.CREATED_AT;
+      order = OrderType.DESC;
       break;
     case SortOptions.DateAsc:
-      sortField = "createdAt";
-      order = "asc";
+      sortField = SortingField.CREATED_AT;
+      order = OrderType.ASC;
       break;
     default:
-      sortField = "price";
-      order = "desc";
+      sortField = SortingField.PRICE;
+      order = OrderType.DESC;
   }
 
   let path = `products?page=${page}&limit=${limit}&sortBy=${sortField}&order=${order}`;
@@ -98,7 +108,6 @@ export async function getProductModelandBrand() {
       uniqueBrands.add(product.brand);
     });
 
-    console.log({ uniqueModels });
     return {
       models: Array.from(uniqueModels),
       brands: Array.from(uniqueBrands),
